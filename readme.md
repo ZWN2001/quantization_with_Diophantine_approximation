@@ -72,3 +72,39 @@ MSE: 5.765476461225458e-05
 涨跌准确率: 98.72405256141687%
 ```
 
+## 使用连分数进行精度控制
+
+```python
+def approximate_with_rational(matrix, precision):
+    """
+    使用连分数逼近量化矩阵中的浮点数，动态调整分母限制。
+
+    参数:
+        matrix (np.ndarray): 原始浮点数矩阵，可以是多维矩阵。
+        max_denominator (int): 逼近的分母最大值。默认值为100。
+
+    返回:
+        np.ndarray: 量化后的矩阵，元素为 Fraction 类型。
+    """
+
+    # 映射函数：根据数值的大小映射出对应的最大分母限制
+    def map_to_max_denominator(value):
+        if value == 0: return 1
+        abs_value = abs(value)
+        d = 10**precision/abs_value
+        d = int(d)
+        return d
+
+    def quantize_element(element):
+        if isinstance(element, np.ndarray):  # 如果是子数组，递归处理
+            return np.array([quantize_element(sub_elem) for sub_elem in element], dtype=object)
+        else:
+            # 使用映射函数来动态获取该元素的最大分母
+            dynamic_denominator = map_to_max_denominator(element)
+            # 量化该元素
+            return Fraction(str(element)).limit_denominator(dynamic_denominator)
+
+    return quantize_element(matrix)
+```
+
+其中，采用 $y_{d}=\frac{10^{p}}{|value|}$ 作为分母限制，思想类似于保留的有效数字位数，这里意味着前`p`位有效数字是准确的
