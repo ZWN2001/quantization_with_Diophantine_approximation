@@ -1,5 +1,20 @@
 本项目针对[该项目](https://github.com/ZWN2001/CNN-BiLSTM-Attention-K-Line-Prediction)的模型进行基于丢番图逼近的参数优化
 
+
+$$
+x_1,x_2,...,x_k
+$$
+
+$$
+a_1,a_2,...a_k,b\\
+$$
+
+$$
+x^2+y^2=z^2
+$$
+
+
+
 所优化的模型结构：
 
 ```
